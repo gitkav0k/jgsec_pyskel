@@ -1,3 +1,7 @@
 pip-audit
 pytest
+pytest-cov
+
 bandit
+ruff
+pylint

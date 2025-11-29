@@ -6,6 +6,9 @@
 # pyenv
 .python-version
 
+# Security scans
+codeql-db/
+
 # Icon must end with two \r
 Icon
 
