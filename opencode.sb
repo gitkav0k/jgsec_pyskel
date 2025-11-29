@@ -1,0 +1,79 @@
+(version 1)
+(deny default)
+
+;; -----------------------------------------------------------------------------
+;; PARAMETERS
+;; -----------------------------------------------------------------------------
+;; The working directory is passed in at runtime.
+(define work-dir (param "WORK_DIR"))
+(define home-dir (param "HOME"))
+
+;; -----------------------------------------------------------------------------
+;; NETWORK
+;; -----------------------------------------------------------------------------
+;; Allow network access for API communication (LLM, etc.) and git operations
+(allow network*)
+(allow system-socket)
+
+;; -----------------------------------------------------------------------------
+;; FILE SYSTEM - READ
+;; -----------------------------------------------------------------------------
+;; "Read from anything on the system that the current user has access to"
+(allow file-read* (subpath "/"))
+
+;; -----------------------------------------------------------------------------
+;; FILE SYSTEM - WRITE
+;; -----------------------------------------------------------------------------
+;; "Only be able to write to the current directory"
+(allow file-write* 
+    (subpath work-dir)
+    (subpath "/Users/john/.local/share/opencode")
+)
+
+
+;; Allow writing to standard temporary locations required by Python and System tools
+(allow file-write*
+    (subpath "/private/var/folders")
+    (subpath "/var/folders")
+    (subpath "/tmp")
+    (subpath "/private/tmp")
+    (subpath "/var/tmp")
+    (subpath "/private/var/tmp")
+)
+
+;; Allow writing to standard devices (terminal output, null, etc.)
+(allow file-write*
+    (literal "/dev/null")
+    (literal "/dev/zero")
+    (literal "/dev/dtracehelper")
+    (literal "/dev/tty")
+    (literal "/dev/stdin")
+    (literal "/dev/stdout")
+    (literal "/dev/stderr")
+    (literal "/dev/ptmx")
+)
+
+;; Allow ioctl for TTYs (required for interactive CLI)
+(allow file-ioctl)
+
+;; -----------------------------------------------------------------------------
+;; PROCESS EXECUTION
+;; -----------------------------------------------------------------------------
+;; Allow executing binaries (python, git, bash, etc.)
+;; We rely on file-read* (subpath "/") to access the binaries themselves.
+(allow process-exec*)
+(allow process-fork)
+
+;; -----------------------------------------------------------------------------
+;; SYSTEM MECHANISMS
+;; -----------------------------------------------------------------------------
+;; Basic system operations required for Python/macOS runtimes
+(allow sysctl-read)
+(allow signal)
+(allow ipc-posix-shm)
+
+;; Mach lookup is required for DNS resolution, SSL, and system frameworks.
+;; A strict whitelist here is fragile across macOS versions. 
+;; Since we restrict file writes heavily, we allow global mach lookup to ensure
+;; stability of the Python interpreter and network stack.
+(allow mach-lookup)
