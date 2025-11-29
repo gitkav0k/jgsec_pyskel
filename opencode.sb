@@ -27,7 +27,7 @@
 ;; "Only be able to write to the current directory"
 (allow file-write* 
     (subpath work-dir)
-    (subpath "/Users/john/.local/share/opencode")
+    (subpath (string-append home-dir "/.local/share/opencode"))
 )
 
 
