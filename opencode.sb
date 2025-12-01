@@ -28,6 +28,7 @@
 (allow file-write* 
     (subpath work-dir)
     (subpath (string-append home-dir "/.local/share/opencode"))
+    (subpath (string-append home-dir "/.cache/opencode"))
     (subpath (string-append home-dir "/Library/Caches"))
 )
 
