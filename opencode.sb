@@ -28,6 +28,7 @@
 (allow file-write* 
     (subpath work-dir)
     (subpath (string-append home-dir "/.local/share/opencode"))
+    (subpath (string-append home-dir "/Library/Caches"))
 )
 
 
@@ -63,6 +64,7 @@
 ;; We rely on file-read* (subpath "/") to access the binaries themselves.
 (allow process-exec*)
 (allow process-fork)
+(allow process-info*)
 
 ;; -----------------------------------------------------------------------------
 ;; SYSTEM MECHANISMS
@@ -71,6 +73,7 @@
 (allow sysctl-read)
 (allow signal)
 (allow ipc-posix-shm)
+(allow user-preference-read)
 
 ;; Mach lookup is required for DNS resolution, SSL, and system frameworks.
 ;; A strict whitelist here is fragile across macOS versions. 
